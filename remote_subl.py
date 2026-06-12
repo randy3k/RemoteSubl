@@ -95,7 +95,7 @@ class File:
                     f.host and f.host == self.host:
                 return f.temp_dir
 
-        for vid, f in LOST_FILES.items():
+        for vid, f in list(LOST_FILES.items()):
             if f.env["real-path"] and f.env["real-path"] == self.env["real-path"] and \
                     f.host and f.host == self.host:
                 LOST_FILES.pop(vid)
@@ -304,7 +304,7 @@ class ConnectionHandler(socketserver.BaseRequestHandler):
     def cleanup(self, session):
         settings = sublime.load_settings("remote_subl.sublime-settings")
         vid_to_pop = []
-        for vid, file in FILES.items():
+        for vid, file in list(FILES.items()):
             if file.session == session:
                 # only show message once
                 if not vid_to_pop:
