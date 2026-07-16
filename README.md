@@ -54,43 +54,53 @@ are different versions of `rmate` to choose from:
 - A C version: https://github.com/hanklords/rmate.c
 - A node.js version: https://github.com/jrnewell/jmate
 
+
+---
+
 # Usage
 
 Open an ssh connection to the remote server with remote port forwarded. It can
 be done by executing the following command on your local machine:
 
 ```bash
-ssh -R 52698:localhost:52698 user@example.com
-```
+ssh -R 52698:127.0.0.1:52698 user@example.com
+
+
+> [!WARNING]
+> **Avoid using `localhost` in your port forwarding setup.**
+> On many systems, `localhost` resolves to the IPv6 loopback (`::1`), while the 
+> local Sublime Text helper server binds strictly to IPv4 (`127.0.0.1`). This 
+> mismatch will cause `rmate` to silently fail and drop the connection with a 
+> **SIGPIPE (exit code 141)**. Always use `127.0.0.1` explicitly.
 
 After running the server, you can just open the file by typing the following
 command in your remote system's terminal:
 
-```
+```bash 
 rmate test.txt
 ```
 
-(***NOTE:*** you need to have opened Sublime Text on your local machine.
-*If not* you get this error: `connect_to localhost port 52698: failed.` on your
-server)
+(*NOTE:* you need to have opened Sublime Text on your local machine. 
+*If not* you get this error: `connect_to 127.0.0.1 port 52698: failed.` on your
+ server)
 
-... or if you renamed it to `rsubl` then ...
+... or if you renamed it to rsubl then ...
 
-```
+```bash 
 rsubl test.txt
 ```
 
 If everything has been setup correctly, you should be able to see the opening
 file in Sublime Text.
 
-### SSH config
+## SSH config
 
-It could be tedious to type `-R 52698:localhost:52698` everytime you ssh. To
+It could be tedious to type `-R 52698:127.0.0.1:52698` everytime you ssh. To
 make your life easier, add the following to `~/.ssh/config`,
 
-```
+```text 
 Host example.com
-    RemoteForward 52698 localhost:52698
+    RemoteForward 52698 127.0.0.1:52698
     User user
 ```
 
@@ -103,7 +113,7 @@ your host:
 
 1. Navigate to `Connection` > `SSH` > `Tunnels` in the left-hand navigation pane
 1. In the `Add new forwarded port:` section, add `52698` to `Source port` text field
-1. Then add `localhost:52698` in the `Destination` text field
+1. Then add `127.0.0.1:52698` in the `Destination` text field
 1. Select `Remote` checkbox instead of `Local`
 1. Click `Add` to add your forwarding information to the `Forwarded ports:` list
 1. Save your settings if you'd like, and then connect to your remote host
